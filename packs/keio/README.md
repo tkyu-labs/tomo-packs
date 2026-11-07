@@ -16,7 +16,7 @@
   supported. Identifier fields return placeholders; banking and settings are excluded.
 - EN: Registered-course detail dialogs are supported. Attendance-source discovery is documented, but a real
   attendance-history schema has not yet been verified; this pack does not register attendance.
-- ZH: 通过 K-Support 查询学业记录的社区学校包。课程卡片与英文成绩行已在真实浏览器验证，
+- ZH: 通过 K-Support 查询学业记录的社区能力包。课程卡片与英文成绩行已在真实浏览器验证，
   学期与累积 GPA 的数值读取也已实测；有数据的学分汇总仍待实测。
   本包与庆应义塾大学无隶属或背书关系。
 - ZH: 支持 My Page 学籍字段、页面显示的休学／留学历史和休学学期数；身份字段返回占位符，不读取银行账户或修改设置。

@@ -1,5 +1,11 @@
 # Changelog
 
+## 0.1.1
+
+- EN: The Chinese pack name follows Tomo's term: 庆应义塾大学能力包.
+- ZH: 中文包名与 Tomo 界面用语统一为“庆应义塾大学能力包”。
+- JA: 中国語のパック名を Tomo の用語に合わせました（庆应义塾大学能力包）。
+
 ## 0.1.0
 
 - EN: Finalize the first K-Support pack. Official-website research, Tomo end-to-end trials and broader live-page

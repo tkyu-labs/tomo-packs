@@ -5,7 +5,7 @@
       "id": "keio",
       "name": {
         "en": "Keio University Pack",
-        "zh": "庆应义塾大学学校包",
+        "zh": "庆应义塾大学能力包",
         "ja": "慶應義塾大学パック"
       },
       "school": {
@@ -15,7 +15,7 @@
       },
       "short": "慶應義塾大学",
       "domain": "keio.ac.jp",
-      "version": "0.1.0",
+      "version": "0.1.1",
       "requires": {
         "tomo": ">=0.1.0",
         "hermes": "0.21.x"
@@ -24,14 +24,14 @@
         "name": "WBW",
         "github": "WBW0623"
       },
-      "lock_sha256": "d7dfdead5b58500b8d97d4bc60dadaed03eb710a740c9fcba9936aefb4beda24"
+      "lock_sha256": "3ec0b4e3dd1da06b07f7ee1808c65ca04bf1bededbcdc5bec54ee47668f9292f"
     },
     {
       "id": "shonan-it",
       "name": {
         "en": "Shonan Institute of Technology Pack",
-        "zh": "Shonan Institute of Technology Pack",
-        "ja": "Shonan Institute of Technology Pack"
+        "zh": "湘南工科大学能力包",
+        "ja": "湘南工科大学パック"
       },
       "school": {
         "en": "Shonan Institute of Technology",
@@ -40,7 +40,7 @@
       },
       "short": "湘南工科大学",
       "domain": "shonan-it.ac.jp",
-      "version": "0.1.0",
+      "version": "0.1.1",
       "requires": {
         "tomo": ">=0.1.0",
         "hermes": "0.21.x"
@@ -49,7 +49,7 @@
         "name": "TK",
         "github": "TkYu"
       },
-      "lock_sha256": "7b51f052d4df095188b42bc9f688c9ca2af7d70ebc66aa943ae44a17779aaf3f"
+      "lock_sha256": "6a26a1d7ccac338b8a06db8c6ea7e4c386db2748b0b31823429c3a7472a62775"
     }
   ]
 }

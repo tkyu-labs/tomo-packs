@@ -1,6 +1,10 @@
 # Changelog
 
-## 0.1.0 (unreleased)
+## 0.1.1
+
+- The pack's name in Japanese and Chinese: 湘南工科大学パック / 湘南工科大学能力包 (was English in every language).
+
+## 0.1.0
 
 - Pack skeleton: manifest, Hatch questionnaire, SOUL fragment.
 - `campussquare` skill: reads timetable, grades, credits, GPA and the self-checks from CampusSquare in the visible

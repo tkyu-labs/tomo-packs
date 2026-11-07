@@ -2,7 +2,7 @@ schema: 1
 id: keio
 name:
   en: Keio University Pack
-  zh: 庆应义塾大学学校包
+  zh: 庆应义塾大学能力包
   ja: 慶應義塾大学パック
 school:
   name:
@@ -12,7 +12,7 @@ school:
   short: 慶應義塾大学
   domain: keio.ac.jp
   country: JP
-version: 0.1.0
+version: 0.1.1
 description:
   en: For Keio undergraduate and graduate students across faculties and graduate schools. Read student profile, courses, timetable, grades, displayed GPA and credit summaries through K-Support.
   zh: 面向庆应全校各学部与大学院学生，通过 K-Support 读取学籍、课程、课表、成绩、页面显示的 GPA 和学分汇总。
