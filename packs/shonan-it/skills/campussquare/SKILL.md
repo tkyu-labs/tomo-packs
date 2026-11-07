@@ -1,7 +1,7 @@
 ---
 name: campussquare
 description: Read the student's CampusSquare courses, grades and credits.
-version: 0.1.0
+version: 0.1.1
 author: TK (TkYu), Hermes Agent
 license: MIT
 platforms: [linux, macos, windows]
@@ -71,8 +71,7 @@ then explain where the page is and let the student look.
    year (default is the student's year) and press `判定`.
    Done when the result tables are present.
 3. **Extract with `browser_console`** using the expressions in `references/extract.md` (compact JSON, one row per
-   course or category); prefer one extraction that returns everything the question needs, since the student approves
-   each read. Snapshots only show controls here; use them to find a filter or button, never to read data.
+   course or category); prefer one extraction that returns everything the question needs. Snapshots only show controls here; use them to find a filter or button, never to read data.
    Done when you have the rows the question needs and the page's "as of" note (e.g. `※2026年度前学期終了時点の結果です。`).
 4. **Answer with the source.** Name the page, term and "as of" date; quote numbers exactly as shown. For graduation
    questions, go through every category of the self-check (see Interpretation), not only the total.

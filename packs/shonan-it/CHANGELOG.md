@@ -1,5 +1,10 @@
 # Changelog
 
+## 0.1.2
+
+- Reading grades is decided once (the Hatch question, or Tomo asks the first time) and can be changed in Tomo's
+  Settings; no approval per item any more. The Hatch text and the `campussquare` skill (0.1.1) say so.
+
 ## 0.1.1
 
 - The pack's name in Japanese and Chinese: 湘南工科大学パック / 湘南工科大学能力包 (was English in every language).

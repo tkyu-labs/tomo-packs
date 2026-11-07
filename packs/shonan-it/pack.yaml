@@ -13,7 +13,7 @@ school:
   short: 湘南工科大学
   domain: shonan-it.ac.jp
   country: JP
-version: 0.1.1
+version: 0.1.2
 description:
   en: School calendar, procedures and notices from the official website, and help with the CampusSquare portal.
   zh: 从学校官网查找学年暦、各种手续和通知，以及 CampusSquare 门户的操作帮助。

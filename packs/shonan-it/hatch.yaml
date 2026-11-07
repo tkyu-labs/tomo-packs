@@ -353,13 +353,13 @@ questions:
     when: "year > 1"
     label: { en: "May Tomo read your grades when you ask?", zh: "提问时 Tomo 可以读取你的成绩吗？", ja: "質問したときに成績を読んでもよいですか？" }
     why:
-      en: "Needed for credit checks. Tomo opens CampusSquare in a browser window you can see and reads nothing when you are not there; you still approve each item before it is sent."
-      zh: "核对学分时需要。Tomo 会在你看得见的浏览器窗口里打开 CampusSquare，你不在场时不会读取任何内容；每一项在发送前仍会逐项征求你的同意。"
-      ja: "単位の確認に必要です。見えるブラウザで CampusSquare を開き、あなたがいないときは何も読みません。送信前には項目ごとに必ず確認します。"
+      en: "Needed for credit checks. Tomo opens CampusSquare in a browser window you can see and reads nothing when you are not there. You decide only once here; change it any time in Settings."
+      zh: "核对学分时需要。Tomo 会在你看得见的浏览器窗口里打开 CampusSquare，你不在场时不会读取任何内容。只在这里决定一次，之后可随时在设置里修改。"
+      ja: "単位の確認に必要です。見えるブラウザで CampusSquare を開き、あなたがいないときは何も読みません。確認はここでの一度だけで、設定でいつでも変更できます。"
     options:
       - { value: watch, label: { en: "Yes, but only while I'm watching", zh: "可以，必须在我的注视下进行", ja: "はい、必ず私が見ている前で" } }
       - { value: never, label: { en: "No", zh: "不可以", ja: "いいえ" } }
-    remember: "Grades: {answer}. Read them only in the visible browser while the student is present, and ask before sending any grade."
+    remember: "Grades: {answer}. Read them only in the visible browser while the student is present."
 
   - id: anything_else
     section: life
