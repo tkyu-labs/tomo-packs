@@ -20,7 +20,11 @@ request rules; `packs/shonan-it/` is the reference pack. `CLAUDE.md` imports thi
 - **Three languages** for every user-facing text (en, zh, ja). Skill bodies are English; quote the school's own terms
   in the original language (Japanese UI labels exactly as shown).
 - **Works on older Tomo versions.** Use fallbacks (e.g. `${TOMO_DOWNLOADS:-…}`); set `requires.tomo` in `pack.yaml`
-  (a Tomo version number) only when a skill cannot work at all on older versions.
+  (a Tomo version number) only when a skill cannot work at all on older versions. Older Tomo then keeps the
+  installed version, and its first-run list does not offer the pack at all: merge such a change only after that Tomo
+  version is published. To see what an older Tomo does with a new field, read its released code (`git show v0.2.0:…`
+  in the Tomo repository).
+- The README's pack table shows each pack's current version; `validate.py` fails when it differs from `pack.yaml`.
 - After any change: `python tools/validate.py --write`, then commit the updated `pack.lock` and `catalog.json`.
   Commit messages: Conventional Commits with the pack id as scope, `feat(shonan-it): add syllabus search`.
 
