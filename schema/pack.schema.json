@@ -42,9 +42,9 @@
       }
     },
     "host": {
-      "description": "A host name without scheme or path, e.g. syllabus.example.ac.jp.",
+      "description": "A host name without scheme or path, e.g. syllabus.example.ac.jp. A site that exists once per academic year may write {year} for the four-digit year (moodle{year}.example-u.ac.jp; Tomo matches every year, so a new year needs no pack update). Older Tomo does not know {year} (it matches no page there): skills for such a site should check for a tool only newer Tomo has (tomo_page_image) before opening it.",
       "type": "string",
-      "pattern": "^(?=.{1,253}$)([a-z0-9]([a-z0-9-]{0,61}[a-z0-9])?\\.)+[a-z]{2,}$"
+      "pattern": "^(?=.{1,253}$)(([a-z0-9]([a-z0-9-]{0,61}[a-z0-9])?|[a-z0-9-]{0,50}\\{year\\}[a-z0-9-]{0,50})\\.)+[a-z]{2,}$"
     },
     "icon": {
       "type": "string",
@@ -61,6 +61,34 @@
         "box",
         "graduation"
       ]
+    },
+    "prompt": {
+      "description": "An example question in all three languages; `skill` when a different skill than the topic's answers it (Tomo's pack overview lists questions by skill).",
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "en",
+        "zh",
+        "ja"
+      ],
+      "properties": {
+        "en": {
+          "type": "string",
+          "minLength": 1
+        },
+        "zh": {
+          "type": "string",
+          "minLength": 1
+        },
+        "ja": {
+          "type": "string",
+          "minLength": 1
+        },
+        "skill": {
+          "type": "string",
+          "pattern": "^[a-z0-9][a-z0-9-]*$"
+        }
+      }
     }
   },
   "properties": {
@@ -101,6 +129,16 @@
         "country": {
           "type": "string",
           "pattern": "^[A-Z]{2}$"
+        },
+        "municipalities": {
+          "type": "array",
+          "description": "Optional. Municipalities near the school (Japan: 6-digit local government codes, 団体コード, the school's own first); Tomo offers them first when it asks where the student lives.",
+          "items": {
+            "type": "string",
+            "pattern": "^[0-9]{6}$"
+          },
+          "maxItems": 20,
+          "uniqueItems": true
         }
       }
     },
@@ -200,6 +238,35 @@
           },
           "uniqueItems": true
         },
+        "personal_names": {
+          "description": "Optional: the name students know each personal_origins host by (\"portal.example-u.ac.jp\": \"CampusSquare\"). Tomo names these systems when it asks once whether it may read personal data, in Settings and in answers that used it; without a name it shows the host.",
+          "type": "object",
+          "propertyNames": {
+            "$ref": "#/$defs/host"
+          },
+          "additionalProperties": {
+            "type": "string",
+            "minLength": 1,
+            "maxLength": 40
+          }
+        },
+        "content_images": {
+          "description": "Optional: images that may be looked at on a personal_origins site, by URL path pattern (* matches anything), e.g. a quiz's figures or slides in course material: {\"moodle{year}.example-u.ac.jp\": [\"/pluginfile.php/*/question/*\"]}. Tomo fetches only these, with the student's one-time consent, and never takes page screenshots there (they show names). The image itself reaches the model unmasked: list question and material images only, never photos of people. Older Tomo ignores it. New patterns count as added access in an update.",
+          "type": "object",
+          "propertyNames": {
+            "$ref": "#/$defs/host"
+          },
+          "additionalProperties": {
+            "type": "array",
+            "minItems": 1,
+            "uniqueItems": true,
+            "items": {
+              "type": "string",
+              "pattern": "^/[^\\s]*$",
+              "maxLength": 120
+            }
+          }
+        },
         "personal_consent": {
           "description": "The Hatch question whose answer can refuse reading personal data at all; with a refusing answer Tomo reads nothing on personal_origins.",
           "type": "object",
@@ -223,6 +290,35 @@
               "description": "Option values that refuse."
             }
           }
+        },
+        "records": {
+          "description": "Optional: pages of a personal_origins site that the pack's skills may ask Tomo to keep (encrypted on the student's computer, shown in Memory, deleted when the skill's expiry date passes), so later questions need no new sign-in. Each kind is tied to one site; the skill decides when a page may be kept and until when. Older Tomo ignores it (skills then read the page every time). A new kind counts as added access in an update.",
+          "type": "array",
+          "items": {
+            "type": "object",
+            "additionalProperties": false,
+            "required": [
+              "id",
+              "origin"
+            ],
+            "properties": {
+              "id": {
+                "type": "string",
+                "pattern": "^[a-z0-9]+([.-][a-z0-9]+)*$",
+                "maxLength": 60,
+                "description": "The record kind the skill names in tomo_records_put / tomo_records_get, e.g. campussquare.self-check."
+              },
+              "origin": {
+                "$ref": "#/$defs/host",
+                "description": "The personal_origins site the page is on."
+              },
+              "label": {
+                "$ref": "#/$defs/i18n",
+                "description": "What the student sees in Memory (the page's name)."
+              }
+            }
+          },
+          "uniqueItems": true
         },
         "computer_use": {
           "type": "boolean"
@@ -342,8 +438,12 @@
                 "minItems": 1,
                 "maxItems": 5,
                 "items": {
-                  "$ref": "#/$defs/i18n"
+                  "$ref": "#/$defs/prompt"
                 }
+              },
+              "record": {
+                "type": "string",
+                "description": "Optional: a kind from permissions.records. Tomo then gives the topic a page of its own in the sidebar with that kept record as a status card (when it was read, from where, read again); topics without one are listed in the pack overview only. Older Tomo ignores it."
               }
             }
           }

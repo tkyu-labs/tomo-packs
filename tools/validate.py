@@ -102,6 +102,12 @@ def check_skills(pack_dir: Path, manifest: dict, rep: Report) -> None:
         for i, item in enumerate(items or []):
             if isinstance(item, dict) and item.get("skill") not in listed:
                 rep.error(where, f"ui.{kind}[{i}] points to skill '{item.get('skill')}', which is not in skills")
+            if kind == "quick_topics" and isinstance(item, dict) and "record" in item and \
+                    item["record"] not in {r.get("id") for r in (manifest.get("permissions") or {}).get("records") or []}:
+                rep.error(where, f"ui.quick_topics[{i}].record '{item['record']}' is not a kind in permissions.records")
+            for j, prompt in enumerate((item.get("prompts") or []) if isinstance(item, dict) else []):
+                if isinstance(prompt, dict) and "skill" in prompt and prompt["skill"] not in listed:
+                    rep.error(where, f"ui.{kind}[{i}].prompts[{j}] points to skill '{prompt['skill']}', which is not in skills")
     on_disk = {p.name for p in (pack_dir / "skills").iterdir() if p.is_dir()} if (pack_dir / "skills").exists() else set()
     for extra in sorted(on_disk - set(manifest.get("skills") or [])):
         rep.warn(where, f"skills/{extra} exists but is not listed in pack.yaml")
@@ -114,6 +120,15 @@ def check_personal(manifest: dict, hatch: dict | None, where: str, rep: Report) 
     for host in perm.get("personal_origins") or []:
         if host not in origins:
             rep.error(where, f"personal_origins: {host} is not in browser_origins")
+    for site in perm.get("content_images") or {}:
+        if site not in (perm.get("personal_origins") or []):
+            rep.error(where, f"content_images: {site} is not in personal_origins")
+        for pattern in perm["content_images"][site]:
+            if "user/icon" in pattern or pattern.strip("/*") == "":
+                rep.error(where, f"content_images: {site}{pattern} would include photos of people or every image")
+    for kind in perm.get("records") or []:
+        if kind.get("origin") not in (perm.get("personal_origins") or []):
+            rep.error(where, f"records: {kind.get('id')} is on {kind.get('origin')}, which is not in personal_origins")
     consent = perm.get("personal_consent")
     if not consent:
         return
