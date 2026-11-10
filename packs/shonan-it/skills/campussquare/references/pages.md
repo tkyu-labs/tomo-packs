@@ -1,21 +1,21 @@
 # CampusSquare pages
 
-Base: `https://portal.shonan-it.ac.jp/campusweb/`. Open pages by `_flowId`; the server redirects to a URL with a
-fresh `_flowExecutionKey`. Every page starts with a header table: 学生氏名, 学籍番号, 学生所属 (faculty and department,
+Start at `https://portal.shonan-it.ac.jp/` (it redirects to the sign-in form or the portal top) and reach a page
+through the menu (`メニュー` group, then the item). Never type `_flowId` / `_flowExecutionKey` URLs: they change. Every page starts with a header table: 学生氏名, 学籍番号, 学生所属 (faculty and department,
 no 専攻), 学年. Content is inside `<article>`. Layout recorded 2026-11 (2026 後学期) with a 4th-year and a 3rd-year
 account (情報学部); notes marked "3rd year" are what a lower-year account shows differently.
 
-| Menu | Page | URL (relative to base) |
-|---|---|---|
-| ポータル | 授業情報 | `campussquare.do?_flowId=JPW0001000-flow` |
-| ポータル | スケジュール管理 | `campussquare.do?_flowId=PTW0001200-flow` |
-| ポータル | 履修登録・登録状況照会 | `campussquare.do?_flowId=RSW0001000-flow` |
-| ポータル | 学生情報 | `campussquare.do?_flowId=CHW0001000-flow` (not used) |
-| 学修状況・判定 | 履修成績照会 | `campussquare.do?_flowId=SIW0001200-flow` |
-| 学修状況・判定 | 単位修得状況照会 | `campussquare.do?_flowId=SIW0001300-flow` |
-| 学修状況・判定 | 自己判定 | `campussquare.do?_flowId=HTW0001000-flow` |
-| 学修状況・判定 | 資格自己判定 | `campussquare.do?_flowId=HTW0001100-flow` |
-| — | Sign out | `portal.do?page=logout` |
+| Menu group | Item (link text) |
+|---|---|
+| ポータル | 授業情報 |
+| ポータル | スケジュール管理 |
+| ポータル | 履修登録・登録状況照会 |
+| ポータル | 学生情報 (not used) |
+| 学修状況・判定 | 履修成績照会 |
+| 学修状況・判定 | 単位修得状況照会 |
+| 学修状況・判定 | 自己判定 |
+| 学修状況・判定 | 資格自己判定 |
+| — | ログアウト (top right) |
 
 ## 授業情報
 

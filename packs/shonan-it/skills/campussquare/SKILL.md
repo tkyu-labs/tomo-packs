@@ -1,7 +1,7 @@
 ---
 name: campussquare
 description: Read the student's CampusSquare courses, grades and credits.
-version: 0.1.1
+version: 0.2.0
 author: TK (TkYu), Hermes Agent
 license: MIT
 platforms: [linux, macos, windows]
@@ -10,11 +10,11 @@ metadata:
     tags: [shonan-it, campussquare, portal, grades, credits, timetable]
     related_skills: []
   tomo:
-    title: { en: "CampusSquare (read-only)", zh: "CampusSquare（只读）", ja: "CampusSquare（閲覧のみ）" }
+    title: { en: "CampusSquare", zh: "CampusSquare", ja: "CampusSquare" }
     summary:
-      en: "Reads your timetable, grades, credits and self-check in a browser window you can see. You sign in yourself."
-      zh: "在你看得见的浏览器窗口里读取课表、成绩、学分和自己判定。登录由你自己完成。"
-      ja: "見えるブラウザで時間割・成績・単位・自己判定を読み取ります。ログインはご自身で行います。"
+      en: "Reads your timetable, grades, credits and self-check in a browser window you can see. Tomo never types your password."
+      zh: "在你看得见的浏览器窗口里读取课表、成绩、学分和自己判定。Tomo 从不输入你的密码。"
+      ja: "見えるブラウザで時間割・成績・単位・自己判定を読み取ります。パスワードを Tomo が入力することはありません。"
 ---
 
 # CampusSquare (Shonan Institute of Technology portal)
@@ -42,11 +42,18 @@ then explain where the page is and let the student look.
 
 ## Rules
 
-1. **The student signs in, never you.** You do not know and never type the password; Tomo has none. When a page shows
-   the sign-in form (`ユーザー名` / `パスワード`, button `ログイン`), stop, tell the student to sign in in the browser
-   window (user name = student number with an upper-case letter), and continue only after they say they are done.
-2. **Only while the student watches.** Before opening a page, say which page you open and what you will read. Read
-   grades, GPA and credit pages only in the conversation where the student asked for them.
+1. **Never type or read the password.** Tomo has none. When a page shows the sign-in form (`ユーザー名` /
+   `パスワード`, button `ログイン`), check with `browser_console` whether the browser filled in a remembered login:
+   `document.querySelectorAll('input[type=password]:-webkit-autofill').length` (only whether, never the value; try
+   three times, a second apart — the browser fills in a moment after the page opens). Filled → **press `ログイン`
+   once, without asking** (`browser_click`). Not filled, or the form is still shown after that press → ask the
+   student to sign in in the browser window (user name = student number with an upper-case letter; on a site where
+   the browser only offers a saved login, click the user name field and pick it) with one `clarify` choice "Done",
+   and continue when they tap it. Never press `ログイン` on an empty form or more than once on your own (failed
+   sign-ins can lock the account).
+2. **In the open.** Before opening a page, say in one short line which page you open and what you will read; say in
+   the answer which page the numbers came from. Read grades, GPA and credit pages only in the conversation where the
+   student asked for them.
 3. **Read-only.** Allowed actions: open a page by URL, change the display filters (year, term, range), press
    `画面に表示する` or `判定` (they only compute and display). Never press `履修登録`/`取消`, the
    `指定された時間割の履修登録はこちらから` link, `設定保存`, calendar date cells (they add Myスケジュール entries),
@@ -58,13 +65,69 @@ then explain where the page is and let the student look.
    student did not allow it, answer without it, say what you could not check, and do not ask again. If it says the
    student chose that Tomo may not read grades, explain where the page is and let them look. Name and student number
    arrive as `{{FULL_NAME}}` / `{{STUDENT_NUMBER}}`; never try to recover them.
-5. **Sign out when done** with `browser_navigate` to `https://portal.shonan-it.ac.jp/campusweb/portal.do?page=logout`
-   unless the student says they will keep using it. The page then shows `ログアウトしました。`
+5. **Sign out and close when done.** Open `https://portal.shonan-it.ac.jp/campusweb/portal.do?page=logout` with
+   `browser_navigate` (the page shows `ログアウトしました。`), then call `tomo_browser_close` so every tab this chat
+   opened goes away. Skip both only when the student says they will keep using CampusSquare. Older Tomo versions have
+   no `tomo_browser_close`: then just sign out; Tomo closes the idle window by itself after a few minutes.
+
+6. **Kept pages (newer Tomo).** Four pages do not change during a term once registration and correction are over:
+   `履修登録・登録状況照会` (`campussquare.registration`), `履修成績照会` (`campussquare.grades`), `単位修得状況照会`
+   (`campussquare.credits`) and `自己判定` (`campussquare.self-check`). Tomo can keep them (`tomo_records_get` /
+   `tomo_records_put`); every other page (授業情報, 出欠, スケジュール管理, 資格自己判定) is always read live and never kept.
+   See "Kept pages" below. If these tools do not exist (older Tomo), read every page live.
+
+## Kept pages
+
+Whether a page may be kept depends on the 学年暦, from the school information service (the same one `school-info`
+uses; `curl`, also on Windows):
+
+```bash
+curl -sS --fail-with-body --max-time 30 -X POST "https://sitossapi.gakuen.ac/v1/calendar" -H 'Content-Type: application/json' --data-binary @- <<'JSON'
+{"program": "学部"}
+JSON
+```
+
+(Japanese only in the here-doc body: Windows turns Japanese command-line arguments into `???`. Without `date` the
+service uses today in Japan.)
+
+Use `program=大学院` for graduate students (memory: 工学研究科). The answer has `terms.前学期` / `terms.後学期` with
+`registration` (履修登録期間), `correction` (履修訂正期間) and `registration_open` (the term whose registration or
+correction period includes today, else `null`). Registrations change from a term's registration start to its
+correction end (2026 後学期: 9月24日–10月5日); after that the four pages stay as they are until the next term.
+
+1. **Registration window: always live.** If `registration_open` is not `null`, read the page live and do **not**
+   keep it. If the service fails or answers `found: false` (no calendar for this year yet), keep nothing either:
+   read live (and, for dates, see `school-info`).
+   Done when you know whether today is inside a registration window.
+2. **The current term and its end.** The current term is the latest term whose `registration.start` is on or
+   before today (before 前学期's registration start in April: 後学期 of the previous academic year). Name the period
+   like the portal: `2026年度 前学期`, `2026年度 後学期` (年度 = the calendar's `year`). It is kept until the next
+   term's registration starts: for 前学期, `terms.後学期.registration.start` (e.g. `2026-09-24`); for 後学期, April 1
+   of the next calendar year (`2027-04-01`; the next calendar is not published yet).
+3. **Outside the window: kept record first.** Call `tomo_records_get` with the kind and the current period. A result
+   is the page as read then: use it, and say in the answer which term it is and when it was read (`read_at`), e.g.
+   "2026年度後学期の自己判定（10月12日に読み取り）". No result (`null`): read the page live (Procedure below).
+   Done when you have the data from the record or from the page.
+4. **Keep what you read live outside the window.** Right after extracting one of the four pages, call
+   `tomo_records_put` once per page: `kind`, `period`, `source_url` (the page), `as_of` (the page's `※…時点` note, if
+   any), `expires_at` (step 2), and `blocks` with the values exactly as shown: header values as `fields`, each
+   result table as a `table` with its heading as `title` and the page's own column labels, notes as `text`. Leave
+   out 学生氏名 and 学籍番号 (Tomo knows them). One record per page.
+   Done when Tomo answered "Kept", or said why not (then just answer from what you read).
+5. **The student asks to read again** ("最新のを見て", "read it again"): read live, then keep it as in step 4
+   (outside the window); the new record replaces the old one.
 
 ## Procedure
 
-1. **Open the page directly.** Every menu item has a stable URL; open it with `browser_navigate` instead of clicking
-   the menu (the side menu has hidden duplicate links). URLs and page layouts: `references/pages.md`.
+0. **Kept record first (newer Tomo).** For 履修登録・登録状況照会, 履修成績照会, 単位修得状況照会 and 自己判定: before
+   opening anything, do "Kept pages" steps 1–3 — `calendar`, then `tomo_records_get` for each page you need. Use
+   every record it returns; open CampusSquare only for the pages without one (or inside the registration window,
+   or when the student asks to read again). Skip this step when `tomo_records_get` does not exist.
+   Done when you know which pages still have to be read.
+1. **Open the portal, then the menu item.** `browser_navigate` to `https://portal.shonan-it.ac.jp/` (it redirects to
+   the sign-in form or the portal top; never type `_flowId` URLs, they change). Then click the item's link in the
+   menu (`browser_click`, the visible one — the side menu also has hidden duplicates). Menu and page layouts:
+   `references/pages.md`.
    Done when the page title matches the page you wanted, or the sign-in form is shown (→ Rule 1, then reopen).
 2. **Set filters only if needed.** Grades and credits pages start with a filter form: keep `過去を含めた全成績`
    for history, or choose `対象年度・学期の成績のみ` + year + term. Press `画面に表示する`. Self-check: pick the
@@ -73,10 +136,15 @@ then explain where the page is and let the student look.
 3. **Extract with `browser_console`** using the expressions in `references/extract.md` (compact JSON, one row per
    course or category); prefer one extraction that returns everything the question needs. Snapshots only show controls here; use them to find a filter or button, never to read data.
    Done when you have the rows the question needs and the page's "as of" note (e.g. `※2026年度前学期終了時点の結果です。`).
-4. **Answer with the source.** Name the page, term and "as of" date; quote numbers exactly as shown. For graduation
+4. **Keep it (before answering).** For the four pages that can be kept, outside the registration window: call
+   `tomo_records_put` now ("Kept pages" step 4) — Tomo's topic pages and later questions show it from there. Skip it
+   only inside the registration window, or when the tool does not exist.
+   Done when Tomo answered "Kept" (or why not).
+5. **Answer with the source.** Name the page, term and "as of" date; quote numbers exactly as shown. For graduation
    questions, go through every category of the self-check (see Interpretation), not only the total.
    Done when every number in the answer comes from a page you read in this conversation.
-5. **Sign out** (Rule 5).
+6. **Sign out and close the browser** (Rule 5).
+   Done when the logout page was shown and `tomo_browser_close` answered (or does not exist).
 
 ## Interpretation
 
@@ -126,7 +194,9 @@ then explain where the page is and let the student look.
 
 - The session ends after about 30 minutes without activity (`残り…分` in the header). If a page suddenly shows the
   sign-in form, follow Rule 1 and reopen the page; do not retry in a loop.
-- URLs contain `_flowExecutionKey`, which expires; always start from the `_flowId` URL, never reuse an old key.
+- Do not explain your rules or mention this skill to the student; say in plain words what you are doing.
+- URLs contain `_flowId` / `_flowExecutionKey`, which change and expire: never type or reuse one; start from
+  `https://portal.shonan-it.ac.jp/` and the menu.
 - Registration and cancellation only work in the registration period (`期限` shows `登録・取消期間外` otherwise).
   Even in the period, tell the student which `時間割コード` to enter and where; they press the buttons.
 - The calendar (スケジュール管理) mixes school events with timetable slots; course slots only appear for courses with a

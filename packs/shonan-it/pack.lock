@@ -1,19 +1,27 @@
 {
   "pack": "shonan-it",
-  "version": "0.1.2",
+  "version": "0.2.0",
   "files": {
-    "CHANGELOG.md": "3d65f9bd08ebb9f5269fef587798064945d4cd6d290665cc6752a64a38e08119",
+    "CHANGELOG.md": "3361915bb9b88ebbd289e62f364543ba7acce718ac757e3ef13a34b328f61c10",
     "README.md": "ecdb0aa9801c116e16ad9c375398a541851d7c95598eafb1ca3a88eb9e31456a",
     "data/README.md": "5895b09a395b1335fa5dcb9ca41da4425b012e37f0e4e13c7fa765ee3f71714e",
     "evals/cases.yaml": "5177ab6fc3a03df2835d6a18f54acc8ca8244147822469404ded16035aa078fe",
-    "hatch.yaml": "0b3978451755362dc24a4ef0987d60ba64f2bb4334e6ff246f17b3e594aea6cb",
-    "pack.yaml": "861de65873c733a954013fd23be0a84794a349c61ca47f3092527b54d6d1b0b4",
+    "hatch.yaml": "fe108c3014b9c00b1f2958babcba8a1aed275001d1cf1607c8b212c2dbebc281",
+    "pack.yaml": "4a4476320a460b586f48f9e02c13b39be79d823cd1f1393ae6101bf48a4de6cc",
     "skills/README.md": "010ef3b415beafc06cecb1d41b27e280b6356a1b38f0a4376714a56b9e88b7bf",
-    "skills/campussquare/SKILL.md": "f2fb2bfa88a8fd0db4c982dc0508462c9b65d2a6dc4db067fa02fb76df771348",
+    "skills/campussquare/SKILL.md": "3f42bcbca06ccd31a8af86371fb24c68b7da9a03178a761c3811563c12ff5981",
     "skills/campussquare/references/extract.md": "17941bb811bbaaf726da4b5aec1fc522d36f7323ec72f4e0dcc3eb6cde917bbc",
-    "skills/campussquare/references/pages.md": "6687d1f966c24c85e655f5d0c1063e3968d8486f87a350eaafc98948435482c7",
-    "skills/school-info/SKILL.md": "d928293874c8ddb9f255df7ce4e92fdaedae43cd32d097b4136c135501b07135",
+    "skills/campussquare/references/pages.md": "15ad9d5178ba88da39b2c05270b852f3ac2406498e1875c065ff91d404c35799",
+    "skills/course-planning/SKILL.md": "7ac47d1b57bc688964a6eac917bffbd33eff29255c6973c8a9a3aa621b57a23f",
+    "skills/course-planning/scripts/check_plan.py": "14a0267c6317aac45fe89a154259ca195010b4139a4fed6d8d80e09d65108cde",
+    "skills/google-workspace/SKILL.md": "fda4f36590283717fbfe7c2f6b1796450aa0870b3047859037dd2e8d99bda17e",
+    "skills/google-workspace/references/extract.md": "66a28a2966298f0dc4c3087328e17875284cad2b2ef58c6d8a93c4c8ca4b3387",
+    "skills/google-workspace/references/writing.md": "fc6d0fceb9e97771fd4bcdfca280f988884ce6403c0f44bcfc60aa46e953b567",
+    "skills/moodle/SKILL.md": "7086b5ec526c5c599c4628803d523f22543ffa5600a5239a6a8c6651c221ada0",
+    "skills/moodle/references/extract.md": "840f095ec01821573db1b348fc90d1e67736eae4a3a63668e81f26d0f20b3b9b",
+    "skills/school-info/SKILL.md": "2fba36f77423e8358a4ecd639930217b184ef40a38e50a3f6a80b1d2c85b2f72",
     "skills/school-info/references/pages.md": "034a5fc9b9404719676ee275eaf9854ad6292bc7d9706b8da9030a2d015debf5",
-    "soul.md": "3afea1730fe1caf5e562588aaba735e267b4d9201cf94b4420b26c5bd94f4965"
+    "skills/syllabus/SKILL.md": "f702c494c8cefe0226f9a8d225bfa7f5e77a78b242b7ebc08aae951d11bd2259",
+    "soul.md": "449bee0aa144836f22ddc526c03234735e20f1dfcd016d7b9611270124177734"
   }
 }

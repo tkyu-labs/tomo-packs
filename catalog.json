@@ -40,16 +40,16 @@
       },
       "short": "湘南工科大学",
       "domain": "shonan-it.ac.jp",
-      "version": "0.1.2",
+      "version": "0.2.0",
       "requires": {
-        "tomo": ">=0.1.0",
-        "hermes": "0.21.x"
+        "tomo": ">=0.3.0",
+        "hermes": "0.22.x"
       },
       "publisher": {
         "name": "TK",
         "github": "TkYu"
       },
-      "lock_sha256": "2bf3203fd96a82f76c415f3c6074281dca90086708e74685f2d37f0ed2ba078f"
+      "lock_sha256": "a204afa209b5c9a1c521093a41cf03156ac0c075dec79f006898be3506a7143f"
     }
   ]
 }

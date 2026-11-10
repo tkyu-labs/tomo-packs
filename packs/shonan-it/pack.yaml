@@ -13,34 +13,85 @@ school:
   short: 湘南工科大学
   domain: shonan-it.ac.jp
   country: JP
-version: 0.1.2
+  # near the school (団体コード): 藤沢市 (Tsujido campus), 茅ヶ崎市, 平塚市, 鎌倉市, 寒川町, 横浜市戸塚区, 横浜市泉区, 大和市, 綾瀬市, 海老名市
+  municipalities: ["142051", "142077", "142034", "142042", "143219", "141101", "141160", "142131", "142182", "142158"]
+version: 0.2.0
 description:
-  en: School calendar, procedures and notices from the official website, and help with the CampusSquare portal.
-  zh: 从学校官网查找学年暦、各种手续和通知，以及 CampusSquare 门户的操作帮助。
-  ja: 公式サイトの学年暦・各種手続き・お知らせの検索と、CampusSquare ポータルの操作サポート。
+  en: School calendar, procedures and notices from the official website, help with the CampusSquare portal, and your school mail (Gmail).
+  zh: 从学校官网查找学年暦、各种手续和通知，CampusSquare 门户的操作帮助，以及学校邮箱（Gmail）。
+  ja: 公式サイトの学年暦・各種手続き・お知らせの検索、CampusSquare ポータルの操作サポート、大学のメール（Gmail）。
 license: MIT
 publisher:
   name: TK
   github: TkYu
 requires:
-  tomo: ">=0.1.0"
-  hermes: "0.21.x"
+  tomo: ">=0.3.0"
+  hermes: "0.22.x"
 
 permissions:
   network:
     - www.shonan-it.ac.jp
     - syllabus.shonan-it.ac.jp
+    - sitossapi.gakuen.ac         # the school information service (search over the site, its PDFs and the syllabus; read-only)
   browser_origins:
     - portal.shonan-it.ac.jp
+    # the school's Google Workspace (SIT mail is Gmail): mail, and the files / forms / calendar links in it
+    - mail.google.com
+    - docs.google.com
+    - drive.google.com
+    - calendar.google.com
+    # Moodle: one site per academic year (moodle2026 = 2026), last year's kept as an archive
+    - moodle{year}.shonan-it.ac.jp
   personal_data:
     - grades
     - self_assessment
     - timetable
-  # every CampusSquare page is about the student: Tomo shows the model only headings and controls there and asks the
-  # student before sending any value read on it
+  # every CampusSquare page and the student's school mail and files are about the student: Tomo shows the model only
+  # headings and controls there; values are read only with the one consent below (shared by all of these sites)
   personal_origins:
     - portal.shonan-it.ac.jp
+    - mail.google.com
+    - docs.google.com
+    - drive.google.com
+    - calendar.google.com
+    - moodle{year}.shonan-it.ac.jp
+  personal_names:
+    portal.shonan-it.ac.jp: CampusSquare
+    mail.google.com: Gmail
+    docs.google.com: Google ドキュメント・フォーム
+    drive.google.com: Google ドライブ
+    calendar.google.com: Google カレンダー
+    moodle{year}.shonan-it.ac.jp: Moodle
+  # images the agent may look at on Moodle: question figures and course material, never profile pictures (user/icon)
+  # or page screenshots; reaches the model as is (no masking for images)
+  content_images:
+    moodle{year}.shonan-it.ac.jp:
+      - /pluginfile.php/*/question/*
+      - /pluginfile.php/*/mod_resource/*
+      - /pluginfile.php/*/mod_page/*
+      - /pluginfile.php/*/mod_label/*
+      - /pluginfile.php/*/mod_book/*
+      - /pluginfile.php/*/mod_folder/*
+      - /pluginfile.php/*/mod_quiz/*
+      - /pluginfile.php/*/mod_assign/intro*
+      - /pluginfile.php/*/course/section/*
+      - /pluginfile.php/*/course/summary/*
   personal_consent: { question: grades_consent, refuse: [never] }
+  # CampusSquare pages that do not change during a term once registration and correction are over (skills/campussquare:
+  # kept only outside 履修登録期間–履修訂正期間, until the next term's registration starts); everything else is read live
+  records:
+    - id: campussquare.registration
+      origin: portal.shonan-it.ac.jp
+      label: { en: "Registration status (履修登録・登録状況照会)", zh: "履修登録・登録状況照会", ja: "履修登録・登録状況照会" }
+    - id: campussquare.grades
+      origin: portal.shonan-it.ac.jp
+      label: { en: "Grades (履修成績照会)", zh: "履修成績照会", ja: "履修成績照会" }
+    - id: campussquare.credits
+      origin: portal.shonan-it.ac.jp
+      label: { en: "Credits earned (単位修得状況照会)", zh: "単位修得状況照会", ja: "単位修得状況照会" }
+    - id: campussquare.self-check
+      origin: portal.shonan-it.ac.jp
+      label: { en: "Graduation self-check (自己判定)", zh: "自己判定", ja: "自己判定" }
   computer_use: false
 
 sources:
@@ -52,7 +103,11 @@ sources:
 
 skills:
   - campussquare        # CampusSquare portal, read-only, through the visible browser
-  - school-info         # the official website: search in Japanese (site:shonan-it.ac.jp), pages and PDFs
+  - school-info         # the official website and its PDFs through the school information service; 学年暦 dates
+  - syllabus            # this year's syllabus: courses by conditions, keywords or topic; one course in detail
+  - course-planning     # a plan for the coming term from credits, wishes and the syllabus, counted by a local script
+  - moodle              # this year's Moodle (and last year's archive): courses, deadlines, assignments, quizzes, grades, material
+  - google-workspace    # the school's Gmail (read, search, drafts; sends only when the student says so) and its Docs / Forms / Calendar links
 
 ui:
   # Every topic and suggestion names the skill that answers it; add more as skills are written.
@@ -72,6 +127,7 @@ ui:
     - id: credits
       icon: graduation
       skill: campussquare
+      record: campussquare.self-check   # its page shows the kept 自己判定 as a status card
       label: { en: "Credits & graduation", zh: "学分与毕业", ja: "単位・卒業" }
       description:
         en: "Grades, GPA and the graduation self-check (自己判定), category by category. You watch the browser while Tomo reads."
@@ -93,8 +149,47 @@ ui:
         - { en: "When is the summer break this year?", zh: "今年暑假是什么时候？", ja: "今年の夏休みはいつ？" }
         - { en: "When is course registration for the next term?", zh: "下学期的选课登录是什么时候？", ja: "次の学期の履修登録はいつ？" }
         - { en: "How do I get a certificate of enrolment?", zh: "在学证明怎么开？", ja: "在学証明書はどうやって発行する？" }
+    - id: moodle
+      icon: file
+      skill: moodle
+      label: { en: "Moodle", zh: "Moodle", ja: "Moodle" }
+      description:
+        en: "What is due on Moodle, your assignments and quizzes, grades and feedback, and this week's material for each class."
+        zh: "Moodle 上要交的作业和小测、成绩和老师的反馈，以及每门课这周的课件。"
+        ja: "Moodle の締切、課題や小テスト、評点とフィードバック、各授業の今週の資料。"
+      prompts:
+        - { en: "What's due on Moodle this week?", zh: "这周 Moodle 上有什么要交的？", ja: "今週 Moodle で締切があるものは？" }
+        - { en: "Which assignments haven't I submitted yet?", zh: "我还有哪些作业没交？", ja: "まだ出していない課題は？" }
+        - { en: "What feedback did my teachers leave on Moodle?", zh: "老师在 Moodle 上给了我哪些反馈？", ja: "Moodle で先生からどんなフィードバックが来ている？" }
+        - { en: "Write a Moodle message to my teacher", zh: "帮我在 Moodle 上给老师写一条消息", ja: "Moodle で先生にメッセージを書いて" }
+    - id: mail
+      icon: bell
+      skill: google-workspace
+      label: { en: "School mail", zh: "学校邮件", ja: "大学のメール" }
+      description:
+        en: "New mail in your school Gmail, what a Japanese mail means and what to do about it, and drafts to your professors or the office. Tomo never sends without your OK."
+        zh: "查看学校 Gmail 的新邮件，解释日文邮件的意思和该做什么，帮你给老师或学生科写邮件草稿。没有你的同意，Tomo 不会发送。"
+        ja: "大学の Gmail の新着メール、日本語メールの意味と対応、先生や事務へのメールの下書き。あなたの OK なしに Tomo が送信することはありません。"
+      prompts:
+        - { en: "Any new mail from the school?", zh: "学校有新邮件吗？", ja: "大学から新しいメールは来てる？" }
+        - { en: "What does the latest mail from 学生課 ask me to do?", zh: "学生课最新那封邮件要我做什么？", ja: "学生課からの最新のメールは何をすればいい？" }
+        - { en: "Draft a mail to my professor: I'll be absent next week", zh: "帮我给老师写封邮件草稿：下周请假", ja: "先生に来週欠席するメールの下書きを書いて" }
+    - id: courses
+      icon: book
+      skill: syllabus
+      label: { en: "Courses", zh: "课程与シラバス", ja: "科目・シラバス" }
+      description:
+        en: "This year's syllabus: courses by conditions (online, no exam, your year), keywords or topics, and how each is graded."
+        zh: "本年度シラバス：按条件（メディア授業、无考试、你的年级）、关键词或主题找课，并说明评分方式。"
+        ja: "今年度のシラバスから、条件（メディア授業・試験なし・学年）、キーワード、テーマで科目を探し、評価方法を確認します。"
+      prompts:
+        - { en: "Which courses for my year have no exam?", zh: "我这个年级有哪些课不考试？", ja: "自分の学年で試験のない科目は？" }
+        - { en: "Which courses are online (メディア授業)?", zh: "哪些课是メディア授業（线上）？", ja: "メディア授業の科目は？" }
+        - { en: "Which courses use Adobe software?", zh: "哪些课会用到 Adobe 软件？", ja: "Adobe のソフトを使う授業は？" }
+        - { en: "Help me choose courses for next term", zh: "帮我规划下学期选什么课", ja: "次の学期の履修を一緒に考えて", skill: course-planning }
   quick_ask_suggestions:
     - { skill: school-info, text: { en: "When is the summer break this year?", zh: "今年暑假是什么时候？", ja: "今年の夏休みはいつ？" } }
+    - { skill: syllabus, text: { en: "Which courses for my year have no exam?", zh: "我这个年级有哪些课不考试？", ja: "自分の学年で試験のない科目は？" } }
     - { skill: campussquare, text: { en: "What classes do I have today?", zh: "我今天有什么课？", ja: "今日の授業は？" } }
-    - { skill: campussquare, text: { en: "Which categories am I still short of?", zh: "我还有哪些区分的学分不够？", ja: "まだ単位が足りない区分は？" } }
-    - { skill: campussquare, text: { en: "What is my GPA?", zh: "我的 GPA 是多少？", ja: "私の GPA は？" } }
+    - { skill: moodle, text: { en: "What's due on Moodle this week?", zh: "这周 Moodle 上有什么要交的？", ja: "今週 Moodle で締切があるものは？" } }
+    - { skill: google-workspace, text: { en: "Any new mail from the school?", zh: "学校有新邮件吗？", ja: "大学から新しいメールは来てる？" } }

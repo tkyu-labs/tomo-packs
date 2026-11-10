@@ -30,18 +30,31 @@ sections:
 
 questions:
   # ------------------------------------------------------------------ basics
+  - id: preferred_name
+    section: basics
+    ask: setup
+    type: identifier
+    variable: PREFERRED_NAME
+    aliases: [name]
+    label: { en: "What should Tomo call you?", zh: "Tomo 应该怎么称呼你？", ja: "Tomo は何とお呼びすればいいですか？" }
+    why:
+      en: "A nickname, your name, or nothing at all: you can skip this. Like every name, it is replaced before anything is sent to an AI model."
+      zh: "昵称、姓名都可以，也可以直接跳过。和所有姓名一样，发送给 AI 模型前都会被替换掉。"
+      ja: "ニックネームでも名前でも、空欄のままでもかまいません。名前はいつも、AI モデルに送る前に置き換えられます。"
+    remember: "Call the student {{PREFERRED_NAME}}."
+
   - id: full_name
     section: basics
     ask: setup
     type: identifier
     variable: FULL_NAME
     aliases: [name, furigana]
-    label: { en: "Your name", zh: "你的姓名", ja: "氏名" }
+    label: { en: "Your name as registered at school", zh: "你在学校登记的姓名", ja: "学校に登録している氏名" }
     why:
-      en: "Your name as written and its furigana, so Tomo can find either in pages and documents and replace it before anything is sent."
-      zh: "姓名的写法和它的フリガナ，让 Tomo 能在网页和文件中找到并在发送前替换掉。"
-      ja: "氏名とフリガナです。ページや書類の中でどちらも見つけ、送信前に置き換えるためです。"
-    remember: "The student's name is {{FULL_NAME}}."
+      en: "Only to find your name on CampusSquare and in school documents and hide it before anything reaches the AI. Leave it empty and your name on those pages cannot be hidden. Furigana is optional."
+      zh: "只用来在 CampusSquare 和学校文件里认出你的名字，并在交给 AI 之前遮盖掉。不填的话，这些页面上的姓名就无法遮盖。フリガナ可以不填。"
+      ja: "CampusSquare や学校の書類であなたの名前を見つけ、AI に届く前に隠すためだけに使います。空欄だと、それらのページの氏名は隠せません。フリガナは任意です。"
+    remember: "The student's registered name is {{FULL_NAME}}."
 
   - id: student_number
     section: basics
@@ -57,6 +70,19 @@ questions:
       ja: "送信前に置き換えます。入学年度と学部の判別にも使います。"
     # Format: 2 digits entry year, 1 letter faculty (A 工学部, B 情報学部, T 大学院; other letters may come), 4 digits.
     remember: "Student number: {{STUDENT_NUMBER}}."
+
+  # not asked in the first run: offered in Tomo's "About you" so a student can add it when they want it hidden
+  - id: school_email
+    section: basics
+    ask: later
+    type: identifier
+    variable: SCHOOL_EMAIL
+    label: { en: "School email address", zh: "学校邮箱", ja: "大学のメールアドレス" }
+    why:
+      en: "Replaced before anything is sent, like your name: in CampusSquare, notices and mail."
+      zh: "和姓名一样，发送前会被替换：CampusSquare、通知和邮件里都是。"
+      ja: "氏名と同じく、送信前に置き換えます（CampusSquare、お知らせ、メール）。"
+    remember: "School email: {{SCHOOL_EMAIL}}."
 
   - id: faculty
     section: basics
@@ -351,15 +377,15 @@ questions:
     ask: setup
     type: choice
     when: "year > 1"
-    label: { en: "May Tomo read your grades when you ask?", zh: "提问时 Tomo 可以读取你的成绩吗？", ja: "質問したときに成績を読んでもよいですか？" }
+    label: { en: "May Tomo read your personal information in the school's systems when you ask?", zh: "提问时 Tomo 可以读取你在学校系统里的个人信息吗？", ja: "質問したときに、学校のシステムにあるあなたの個人情報を読んでもよいですか？" }
     why:
-      en: "Needed for credit checks. Tomo opens CampusSquare in a browser window you can see and reads nothing when you are not there. You decide only once here; change it any time in Settings."
-      zh: "核对学分时需要。Tomo 会在你看得见的浏览器窗口里打开 CampusSquare，你不在场时不会读取任何内容。只在这里决定一次，之后可随时在设置里修改。"
-      ja: "単位の確認に必要です。見えるブラウザで CampusSquare を開き、あなたがいないときは何も読みません。確認はここでの一度だけで、設定でいつでも変更できます。"
+      en: "Grades, timetable, your school mail and other records, for example for credit checks or a mail from the office. Everything happens in the open: Tomo reads them in a browser window you can see, and every answer that used them says so. You decide only once here, for all of the school's systems; change it any time in Settings."
+      zh: "例如核对学分时需要的成绩、课表，或学生科发来的邮件等记录。全程对你透明：Tomo 在你看得见的浏览器窗口里读取，用到它们的回答都会注明。只在这里决定一次，对学校的所有系统都有效，之后可随时在设置里修改。"
+      ja: "単位の確認に使う成績や時間割、事務からのメールなどの記録です。すべてあなたに見える形で行います。Tomo は見えるブラウザで読み、使った回答にはそのことを表示します。確認はここでの一度だけで、学校のすべてのシステムに共通です。設定でいつでも変更できます。"
     options:
-      - { value: watch, label: { en: "Yes, but only while I'm watching", zh: "可以，必须在我的注视下进行", ja: "はい、必ず私が見ている前で" } }
+      - { value: watch, label: { en: "Yes", zh: "可以", ja: "はい" } }
       - { value: never, label: { en: "No", zh: "不可以", ja: "いいえ" } }
-    remember: "Grades: {answer}. Read them only in the visible browser while the student is present."
+    remember: "Reading personal records in school systems (CampusSquare, school mail) allowed: {answer}. Read them in the visible browser; say in the answer when you used them."
 
   - id: anything_else
     section: life
