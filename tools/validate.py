@@ -232,6 +232,16 @@ def secret_scan(pack_dir: Path, rep: Report) -> None:
                     rep.error(f"{rel}:{lineno}", f"looks like a {label}; packs must never contain real personal data or secrets")
 
 
+def check_readme_row(pack_id: str, version: str, rep: Report) -> None:
+    # The README's pack table is what people read first; it fell behind pack.yaml before.
+    readme = (ROOT / "README.md").read_text(encoding="utf-8")
+    row = next((l for l in readme.splitlines() if l.startswith(f"| [`{pack_id}`]")), None)
+    if row is None:
+        rep.error("README.md", f"the pack table has no row for '{pack_id}'")
+    elif row.rstrip(" |").rsplit("|", 1)[-1].strip() != version:
+        rep.error("README.md", f"the pack table lists '{pack_id}' as '{row.rstrip(' |').rsplit('|', 1)[-1].strip()}'; pack.yaml says {version}")
+
+
 def lock_for(pack_dir: Path, version: str) -> dict:
     files = {}
     for path in sorted(pack_dir.rglob("*")):
@@ -276,8 +286,9 @@ def main() -> int:
         check_skills(pack_dir, manifest, rep)
         check_mcp(pack_dir, manifest, rep)
         secret_scan(pack_dir, rep)
+        check_readme_row(pack_dir.name, str(manifest.get("version")), rep)
 
-        lock = lock_for(pack_dir, str(manifest.get("version")))
+        lock =lock_for(pack_dir, str(manifest.get("version")))
         lock_path = pack_dir / "pack.lock"
         if args.write:
             lock_path.write_text(json.dumps(lock, indent=2, ensure_ascii=False) + "\n", encoding="utf-8")
