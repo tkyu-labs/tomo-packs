@@ -41,6 +41,31 @@ Tools a skill can rely on in Tomo: `browser_*` (Tomo's visible browser; `browser
 and awaits promises), `web_search` / `web_extract`, `terminal` (bash, also on Windows; `curl`), `read_file` (reads
 text PDFs locally), `clarify` (questions with choices), `memory`.
 
+### Calling a service from a skill
+
+Models copy well but not perfectly: one wrote a service's host with the usual Japanese ending (`….ac.jp`) instead
+of the real one, got no answer and quietly fell back to the website. So:
+
+- **The agent never types a constant.** Addresses, ports, fixed paths and IDs live in a script in the skill's
+  `scripts/` folder; the skill shows the one command to run, e.g.
+  `bash "${HERMES_SKILL_DIR}/scripts/school-api.sh" courses <<'JSON'` (Hermes replaces `${HERMES_SKILL_DIR}`, with
+  the braces, by the skill's folder when it loads the skill). Links in answers come from the service's own `url`
+  fields, never assembled by the agent.
+- **Run scripts with `bash <path>` or a known interpreter path, never `bash <<` or `bash -c`** (those ask the student
+  for approval). Japanese goes only in a here-doc body on standard input: Windows turns Japanese command-line
+  arguments into `???`.
+- **The script says what to do next.** It prints the answer, or one line naming the case: a wrong request (fix and
+  run again — never a reason to leave the service), the service unavailable after retries (tell the student, then
+  the skill's fallback), a usage error. The skill lists each case; a typo in the command is never treated as an
+  outage.
+- **Falling back is said aloud.** When a skill uses its fallback (the website, web search), the answer says so.
+- **One script, several skills:** every skill that needs it carries the same file (a skill must not reach into
+  another skill's folder). `tools/validate.py` fails when the copies differ, and when a skill names a host that
+  `pack.yaml` does not declare (`permissions.network`, `browser_origins`, `personal_origins`, or a host under
+  `sources.official`), with a hint to the declared host it most likely meant.
+- **Test with a real model more than once** (the default model, each typical question several times) and check the
+  commands it ran, not only the answer.
+
 ## Your first portal skill (agent walkthrough)
 
 Use this when a developer asks you to write the skill for their school's student portal (時間割, 成績, 単位, …).

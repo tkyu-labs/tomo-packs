@@ -1,0 +1,3 @@
+# scripts run with bash on every system: LF line ends, whatever the contributor's Git does on Windows
+*.sh text eol=lf
+*.py text eol=lf

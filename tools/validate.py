@@ -142,6 +142,47 @@ def check_personal(manifest: dict, hatch: dict | None, where: str, rep: Report) 
             rep.error(where, f"personal_consent: '{v}' is not an option of '{consent.get('question')}'")
 
 
+HOST_IN_TEXT = re.compile(r"https?://([A-Za-z0-9{}-]+(?:\.[A-Za-z0-9{}-]+)+)")
+
+
+def check_skill_hosts(pack_dir: Path, manifest: dict, rep: Report) -> None:
+    """Every address a skill names must be one the pack declares (permissions.network, browser_origins,
+    personal_origins, or a host under sources.official). Catches a misspelt service address in a skill before an
+    agent copies it, and points to the declared host it most likely meant."""
+    import difflib
+    perms = manifest.get("permissions") or {}
+    declared = {h.lower() for key in ("network", "browser_origins", "personal_origins") for h in perms.get(key) or []}
+    official = [d.lower() for d in ((manifest.get("sources") or {}).get("official") or [])]
+    for f in sorted(pack_dir.glob("skills/*/**/*")):
+        if not f.is_file() or f.suffix not in (".md", ".sh", ".py", ".txt", ""):
+            continue
+        rel = f.relative_to(ROOT)
+        for lineno, line in enumerate(f.read_text(encoding="utf-8", errors="replace").splitlines(), 1):
+            for host in HOST_IN_TEXT.findall(line):
+                h = host.lower().rstrip(".")
+                if h in declared or any(h == d or h.endswith("." + d) for d in official) or h.endswith(("example.com", "example.org", ".example")):
+                    continue
+                near = [d for d in declared | set(official) if h.startswith(d + ".") or d.startswith(h + ".")
+                        or difflib.SequenceMatcher(None, h, d).ratio() > 0.85]
+                hint = f"; did you mean {near[0]}?" if near else ""
+                rep.error(f"{rel}:{lineno}", f"names {h}, which pack.yaml does not declare (permissions.network / browser_origins){hint}")
+
+
+def check_shared_scripts(pack_dir: Path, rep: Report) -> None:
+    """A script several skills carry (e.g. scripts/school-api.sh) must be the same file everywhere, with LF line ends."""
+    by_name: dict[str, list[Path]] = {}
+    for f in sorted(pack_dir.glob("skills/*/scripts/*")):
+        if f.is_file() and f.name != ".DS_Store":
+            by_name.setdefault(f.name, []).append(f)
+    for name, copies in by_name.items():
+        for c in copies:
+            if b"\r\n" in c.read_bytes():   # bash on macOS / Linux stops at the first CR
+                rep.error(str(c.relative_to(ROOT)), "has Windows line ends (CRLF); scripts need LF")
+        digests = {hashlib.sha256(c.read_bytes()).hexdigest() for c in copies}
+        if len(digests) > 1:
+            rep.error(f"packs/{pack_dir.name}", f"scripts/{name} differs between skills ({', '.join(c.parts[-3] for c in copies)}); keep one version and copy it")
+
+
 def check_mcp(pack_dir: Path, manifest: dict, rep: Report) -> None:
     for name in (manifest.get("mcp") or {}):
         if not (pack_dir / "mcp" / name).is_dir():
@@ -284,6 +325,8 @@ def main() -> int:
             rep.error(where, "hatch.yaml is missing")
         check_personal(manifest, hatch if hatch_path.exists() else None, f"{where}/pack.yaml", rep)
         check_skills(pack_dir, manifest, rep)
+        check_skill_hosts(pack_dir, manifest, rep)
+        check_shared_scripts(pack_dir, rep)
         check_mcp(pack_dir, manifest, rep)
         secret_scan(pack_dir, rep)
         check_readme_row(pack_dir.name, str(manifest.get("version")), rep)
