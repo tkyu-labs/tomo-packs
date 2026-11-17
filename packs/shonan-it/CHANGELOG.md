@@ -1,5 +1,11 @@
 # Changelog
 
+## 0.2.1
+
+- EN: Course and school searches reach the school information service more reliably; when it cannot be reached, Tomo says so before using the website.
+- ZH: 课程和学校信息的检索更稳定地使用学校信息服务；连不上时，Tomo 会先说明，再改用网站。
+- JA: 科目や学校情報の検索で、学校情報サービスをより確実に使うようにしました。つながらないときは、その旨を伝えてからウェブサイトを使います。
+
 ## 0.2.0
 
 - EN: New: Moodle — what's due, assignments, quizzes, grades and feedback; messages to teachers and classmates.

@@ -1,7 +1,7 @@
 ---
 name: school-info
 description: Find school information (calendar, holidays, exams, procedures, notices) on the official Shonan Institute of Technology website.
-version: 0.2.0
+version: 0.2.1
 author: TK (TkYu), Hermes Agent
 license: MIT
 platforms: [linux, macos, windows]
@@ -71,26 +71,26 @@ visa or city procedures beyond what the school publishes (government sources onl
 
 ## Search service
 
-`https://sitossapi.gakuen.ac`, read-only, no key. Call it with the terminal (`curl`, also on Windows). **Japanese
-goes only in a JSON body from a here-doc**, never in the URL or a command-line argument: Windows turns Japanese
-arguments into `???` (then the results are wrong). Do not encode it yourself with node, python or anything else.
+The school information service (read-only, no key) is called only through the script in this skill's folder: it has
+the service's address built in. Copy the script's path exactly as these commands show it (this skill's folder on
+this computer). **Japanese goes only in the JSON body of a here-doc**, never in a command-line argument: Windows turns
+Japanese arguments into `???` (then the results are wrong).
 
 ```bash
-API=https://sitossapi.gakuen.ac/v1
 # the site and its PDFs: one hit per page / file (its best passage; more_in_document counts the others)
-curl -sS --fail-with-body --max-time 30 -X POST "$API/search" -H 'Content-Type: application/json' --data-binary @- <<'JSON'
+bash "${HERMES_SKILL_DIR}/scripts/school-api.sh" search <<'JSON'
 {"q": "奨学金 申請方法", "source": "shonan-it-site", "limit": 6}
 JSON
 # the 学年暦 of the academic year a date falls in (date: default today; program: 学部, or 大学院 for graduate students)
-curl -sS --fail-with-body --max-time 30 -X POST "$API/calendar" -H 'Content-Type: application/json' --data-binary @- <<'JSON'
+bash "${HERMES_SKILL_DIR}/scripts/school-api.sh" calendar <<'JSON'
 {"date": "2026-09-28", "program": "学部"}
 JSON
 # the community BBS (students' posts, mostly Chinese; hits carry category コミュニティ（BBS）)
-curl -sS --fail-with-body --max-time 30 -X POST "$API/search" -H 'Content-Type: application/json' --data-binary @- <<'JSON'
+bash "${HERMES_SKILL_DIR}/scripts/school-api.sh" search <<'JSON'
 {"q": "奨学金 留学生 申請", "source": "sitoss-bbs", "limit": 4}
 JSON
-# a whole page or PDF when a passage is not enough (document_id from a hit; no Japanese, so a plain GET)
-curl -sS --fail-with-body --max-time 30 "$API/documents/12345"
+# a whole page or PDF when a passage is not enough (document_id from a hit)
+bash "${HERMES_SKILL_DIR}/scripts/school-api.sh" document 12345
 ```
 
 - `search` → `results[]`: `title`, `url`, `date`, `category`, `section` (`p.3` = page 3 of a PDF), `text` (the
@@ -100,11 +100,20 @@ curl -sS --fail-with-body --max-time 30 "$API/documents/12345"
   registration or correction period includes the date, else `null`), `source` (title, URL of the 学年暦 PDF).
   `found: false` means that year's calendar is not in the service yet: read the PDF from the official page
   `https://www.shonan-it.ac.jp/campuslife/schedule/` (Procedure step 4).
-- `documents/{id}` → `body` (the full text), `title`, `url`, `info_date`. Long PDFs: read only what you need.
-- Call it with `curl` exactly as shown (also on Windows), Japanese only in the here-doc body; do not write your own
-  client or encoder in Python, node or another language (a command running a script asks the student for approval).
-- An HTTP 4xx answer is about your request: read its `detail`, fix the request and send it again. Only no answer
-  (connection error, timeout) or HTTP 5xx twice in a row: fall back to `web_search` for this question.
+- `document` → `body` (the full text), `title`, `url`, `info_date`. Long PDFs: read only what you need.
+- Use the script exactly as shown (also on Windows). Never type the service's address or a `curl` command for it
+  yourself, never start a command with `bash <<` or `bash -c`, and do not write your own client in Python, node or
+  another language (those ask the student for approval).
+
+What the script prints, and what to do:
+
+- **JSON**: the answer.
+- **`REQUEST ERROR …`**: your request was wrong. Fix it as the message says and run it again; this is no reason to
+  leave the service.
+- **`SERVICE UNAVAILABLE …`**: the script already tried three times. Say in the answer that the school information
+  service could not be reached, then fall back (Procedure step 3) for this question.
+- **`No such file`, `command not found` or `USAGE …`**: the command was mistyped. Copy it again from this skill and
+  run it again; this is not a service failure.
 
 ## Procedure
 
@@ -120,7 +129,7 @@ KEEP="${TOMO_DOCUMENTS:-$HOME/Documents/Tomo}/shonan-it"
 1. **Rewrite the question** into one or two Japanese searches (Rules 2, 3). Done when you have the Japanese terms.
 2. **Ask the service.** Dates: `calendar`. Everything else: `search` with `source=shonan-it-site`; if nothing fits,
    one or two other wordings. For students' practical experience, then also `source=sitoss-bbs` (Rule 8). Open a document when the passage is cut off or the answer needs the whole page.
-   Done when a current page or PDF answers the question, or the service failed / found nothing fitting.
+   Done when a current page or PDF answers the question, or the script said SERVICE UNAVAILABLE / found nothing fitting.
 3. **Fallback only then.** `ls "$KEEP" 2>/dev/null` for a kept file that fits; else `web_search` with
    `site:shonan-it.ac.jp`, then the entry pages in `references/pages.md`; `web_extract` the page.
 4. **Read a PDF yourself** only when the service did not have it (fallback): download it, then `read_file`:

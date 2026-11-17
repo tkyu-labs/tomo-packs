@@ -1,7 +1,7 @@
 ---
 name: course-planning
 description: Suggest courses for the coming term from the student's credits, wishes and the syllabus, checked against CAP, categories and prerequisites.
-version: 0.1.0
+version: 0.1.1
 author: TK (TkYu), Hermes Agent
 license: MIT
 platforms: [linux, macos, windows]
@@ -31,6 +31,10 @@ their wishes. It combines three sources and leaves every count to a script:
 - **CampusSquare** (`campussquare` skill, with its rules for signing in, permission and kept pages): 自己判定 (short
   categories), 単位修得状況照会 (passed and failed courses), 履修登録・登録状況照会 (CAP left, registered courses);
 - **the syllabus** (`syllabus` skill's service): candidates, evaluation, 履修の条件.
+
+The school information service (syllabus, calendar) is used only with the commands of the `syllabus` and
+`school-info` skills: open them (`skill_view`) and copy their `school-api.sh` commands; never type the service's
+address or a `curl` command for it yourself.
 
 ## When to Use
 

@@ -1,7 +1,7 @@
 ---
 name: campussquare
 description: Read the student's CampusSquare courses, grades and credits.
-version: 0.2.0
+version: 0.2.1
 author: TK (TkYu), Hermes Agent
 license: MIT
 platforms: [linux, macos, windows]
@@ -79,16 +79,19 @@ then explain where the page is and let the student look.
 ## Kept pages
 
 Whether a page may be kept depends on the 学年暦, from the school information service (the same one `school-info`
-uses; `curl`, also on Windows):
+uses), called only through the script in this skill's folder, which has the service's address built in. Copy the
+command exactly (also on Windows); never type the service's address or a `curl` command yourself:
 
 ```bash
-curl -sS --fail-with-body --max-time 30 -X POST "https://sitossapi.gakuen.ac/v1/calendar" -H 'Content-Type: application/json' --data-binary @- <<'JSON'
+bash "${HERMES_SKILL_DIR}/scripts/school-api.sh" calendar <<'JSON'
 {"program": "学部"}
 JSON
 ```
 
 (Japanese only in the here-doc body: Windows turns Japanese command-line arguments into `???`. Without `date` the
-service uses today in Japan.)
+service uses today in Japan.) The script prints the JSON, or one line: `REQUEST ERROR …` (fix the body as it says and
+run it again), `SERVICE UNAVAILABLE …` (already retried: keep nothing, read live, step 1), or `No such file` /
+`USAGE …` (the command was mistyped: copy it again from here).
 
 Use `program=大学院` for graduate students (memory: 工学研究科). The answer has `terms.前学期` / `terms.後学期` with
 `registration` (履修登録期間), `correction` (履修訂正期間) and `registration_open` (the term whose registration or
@@ -96,7 +99,7 @@ correction period includes today, else `null`). Registrations change from a term
 correction end (2026 後学期: 9月24日–10月5日); after that the four pages stay as they are until the next term.
 
 1. **Registration window: always live.** If `registration_open` is not `null`, read the page live and do **not**
-   keep it. If the service fails or answers `found: false` (no calendar for this year yet), keep nothing either:
+   keep it. If the script says SERVICE UNAVAILABLE or the answer is `found: false` (no calendar for this year yet), keep nothing either:
    read live (and, for dates, see `school-info`).
    Done when you know whether today is inside a registration window.
 2. **The current term and its end.** The current term is the latest term whose `registration.start` is on or

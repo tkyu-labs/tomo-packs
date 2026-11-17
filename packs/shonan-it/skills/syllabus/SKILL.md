@@ -1,7 +1,7 @@
 ---
 name: syllabus
 description: Find and compare Shonan Institute of Technology courses from the current syllabus (conditions, keywords, content, evaluation, plan).
-version: 0.1.0
+version: 0.1.1
 author: TK (TkYu), Hermes Agent
 license: MIT
 platforms: [linux, macos, windows]
@@ -64,38 +64,39 @@ registration period, or on paper).
    table of up to 15 courses with code, name, term and credits (the student's own department and the coming term
    first) and offer one way to narrow (term, department, form). Never write that a card or link holds "the full
    list" unless it really does (the syllabus site's link is not that list).
-8. **Only the commands below.** Call the service with `curl` exactly as shown (also on Windows), Japanese only in the
-   here-doc body; do not write your own client or encoder in Python, node or another language (a command running a
-   script asks the student for approval), and copy filter values from `facets`, never translate them.
+8. **Only the commands below.** Call the service with the script exactly as shown (also on Windows), Japanese only in
+   the here-doc body. Never type the service's address or a `curl` command yourself, never start a command with
+   `bash <<` or `bash -c`, and do not write your own client in Python, node or another language (those ask the
+   student for approval). Copy filter values from `facets`, never translate them.
 9. **Advice stays advice.** You may say which courses fit what the student said; registration itself is the
    student's (CampusSquare). Do not promise a course is offered at a time or has room.
 
 ## Search service
 
-`https://sitossapi.gakuen.ac`, read-only, no key. Call it with the terminal (`curl`, also on Windows). **Japanese
-goes only in a JSON body from a here-doc**, never in the URL or a command-line argument: Windows turns Japanese
-arguments into `???`. Do not encode it yourself. In the body, a list means "any of these" for filters and "all of
-these" for `contains` and `eval`.
+The school information service (read-only, no key) is called only through the script in this skill's folder: it has
+the service's address built in. Copy the script's path exactly as these commands show it (this skill's folder on
+this computer). **Japanese goes only in the JSON body of a here-doc**, never in a command-line argument: Windows turns
+Japanese arguments into `???`. In the body, a list means "any of these" for filters and "all of these" for
+`contains` and `eval`.
 
 ```bash
-API=https://sitossapi.gakuen.ac/v1
 # the real values of every field (department, field, form, term, grade, required, credits, sections, evaluation items)
-curl -sS --fail-with-body --max-time 30 "$API/courses/facets"
+bash "${HERMES_SKILL_DIR}/scripts/school-api.sh" facets
 # every course meeting all filters (sorted by code; total + next_offset for more)
-curl -sS --fail-with-body --max-time 30 -X POST "$API/courses" -H 'Content-Type: application/json' --data-binary @- <<'JSON'
+bash "${HERMES_SKILL_DIR}/scripts/school-api.sh" courses <<'JSON'
 {"faculty": "情報学部", "department": ["情報学科", "共通基盤科目", "社会人基礎科目"], "grade": 2, "term": "後学期",
  "eval": ["試験=0"], "limit": 50}
 JSON
 # every course whose text contains a word (optionally only in one section), with the sentence
-curl -sS --fail-with-body --max-time 30 -X POST "$API/courses" -H 'Content-Type: application/json' --data-binary @- <<'JSON'
+bash "${HERMES_SKILL_DIR}/scripts/school-api.sh" courses <<'JSON'
 {"contains": ["Adobe"], "section": "履修の条件"}
 JSON
 # ranked by meaning (same filters as above)
-curl -sS --fail-with-body --max-time 30 -X POST "$API/search" -H 'Content-Type: application/json' --data-binary @- <<'JSON'
+bash "${HERMES_SKILL_DIR}/scripts/school-api.sh" search <<'JSON'
 {"q": "人工知能 機械学習 実習", "source": "shonan-it-syllabus", "faculty": "情報学部", "grade": 2, "limit": 8}
 JSON
-# one course: all fields, evaluation, the 15 sessions, every section (the code is ASCII: plain GET)
-curl -sS --fail-with-body --max-time 30 "$API/courses/S-B231L03-01"
+# one course: all fields, evaluation, the 15 sessions, every section
+bash "${HERMES_SKILL_DIR}/scripts/school-api.sh" course S-B231L03-01
 ```
 
 Filters of `courses` (and `search`): `faculty`, `department`, `field`, `required` (必修 / 選択 / 選択必修),
@@ -104,11 +105,16 @@ Filters of `courses` (and `search`): `faculty`, `department`, `field`, `required
 `成果物・発表>=40` (items: 受講態度, 授業中の活動, 予習・復習, 成果物・発表, 試験, 学修の振り返り); `section` — where
 `contains` looks (e.g. `履修の条件`, `授業の進め方`, `教科書`).
 
-An HTTP 4xx answer is about your request, not the service: read the message it prints (`detail`), fix the request
-(a value from `facets`, one value where one is expected) and send it again; never switch to the website for it.
-Only no answer (connection error, timeout) or HTTP 5xx twice in a row means the service is down. Then say so and use
-the school's own syllabus site `https://syllabus.shonan-it.ac.jp/` (search form; open it with the browser tools or
-give the link), without claiming completeness.
+What the script prints, and what to do:
+
+- **JSON**: the answer.
+- **`REQUEST ERROR …`**: your request was wrong (a value not from `facets`, several values where one is expected …).
+  Fix it as the message says and run it again; never switch to the website for it.
+- **`SERVICE UNAVAILABLE …`**: the script already tried three times. Say so in the answer, then use the school's own
+  syllabus site `https://syllabus.shonan-it.ac.jp/` (search form; open it with the browser tools or give the link),
+  without claiming completeness.
+- **`No such file`, `command not found` or `USAGE …`**: the command was mistyped. Copy it again from this skill
+  and run it again; this is not a service failure.
 
 ## Procedure
 
