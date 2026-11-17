@@ -15,7 +15,7 @@ school:
   country: JP
   # near the school (団体コード): 藤沢市 (Tsujido campus), 茅ヶ崎市, 平塚市, 鎌倉市, 寒川町, 横浜市戸塚区, 横浜市泉区, 大和市, 綾瀬市, 海老名市
   municipalities: ["142051", "142077", "142034", "142042", "143219", "141101", "141160", "142131", "142182", "142158"]
-version: 0.2.1
+version: 0.2.2
 description:
   en: School calendar, procedures and notices from the official website, help with the CampusSquare portal, and your school mail (Gmail).
   zh: 从学校官网查找学年暦、各种手续和通知，CampusSquare 门户的操作帮助，以及学校邮箱（Gmail）。

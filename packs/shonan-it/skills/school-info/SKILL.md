@@ -1,25 +1,27 @@
 ---
 name: school-info
-description: Find school information (calendar, holidays, exams, procedures, notices) on the official Shonan Institute of Technology website.
-version: 0.2.1
+description: Find school information (calendar, holidays, exams, procedures, notices) on the official Shonan Institute of Technology website, and the school's own guides for classes (PC and software setup, BYOD) and other material teachers uploaded. Use it before a general web search.
+version: 0.2.2
 author: TK (TkYu), Hermes Agent
 license: MIT
 platforms: [linux, macos, windows]
 metadata:
   hermes:
-    tags: [shonan-it, school-website, calendar, holidays, procedures, notices]
+    tags: [shonan-it, school-website, calendar, holidays, procedures, notices, byod, software-setup, class-materials]
     related_skills: [campussquare]
   tomo:
-    title: { en: "School website search", zh: "学校官网检索", ja: "大学公式サイト検索" }
+    title: { en: "School information search", zh: "学校信息检索", ja: "大学情報検索" }
     summary:
-      en: "Searches the school's official website and its PDFs (in Japanese) for the academic calendar, procedures, rules and notices, and cites the page; students' tips from the community BBS, marked as such."
-      zh: "用日语检索学校官网和官网发布的 PDF，查找学年暦、各种手续、规定和通知，并注明出处；也会参考社区 BBS 上同学们的经验，并注明不是官方说明。"
-      ja: "大学公式サイトと公開 PDF を日本語で検索し、学年暦・各種手続き・規程・お知らせを調べて出典を示します。学生掲示板の体験談も、公式情報ではないと明示して参考にします。"
+      en: "Searches the school's official website and its PDFs, and the guides the school provides for classes (PC and software setup, BYOD), for the academic calendar, procedures, rules and notices, and cites the source; students' tips from the community BBS, marked as such."
+      zh: "检索学校官网和官网发布的 PDF，以及学校为课程准备的指南（电脑和软件的准备、BYOD），查找学年暦、各种手续、规定和通知，并注明出处；也会参考社区 BBS 上同学们的经验，并注明不是官方说明。"
+      ja: "大学公式サイトと公開 PDF、授業のために大学が用意した手順書（PC・ソフトの準備、BYOD）を検索し、学年暦・各種手続き・規程・お知らせを調べて出典を示します。学生掲示板の体験談も、公式情報ではないと明示して参考にします。"
 ---
 
-# School website search (www.shonan-it.ac.jp)
+# School information search (www.shonan-it.ac.jp and the school's own guides)
 
-Answers general questions about Shonan Institute of Technology from its official website: the academic calendar
+Answers general questions about Shonan Institute of Technology from its official website and from the guides the
+school keeps for its classes (setting up the student's own PC and the software classes use: BYOD, 環境構築; other
+material teachers uploaded): the academic calendar
 (学年暦: term dates, holidays, exam periods, course registration), procedures (証明書, 学籍変更, 奨学金, 授業料),
 support for international students (在留管理, 在籍確認), cancelled classes, guidance materials and notices. The site is
 **Japanese only**, so you always search and read in Japanese and answer in the student's language.
@@ -30,6 +32,9 @@ support for international students (在留管理, 在籍確認), cancelled class
 - "When are the final exams?", "Is there class on a national holiday?"
 - "How do I get a certificate / change my address / apply for a scholarship?"
 - "What do international students have to report?", "Where is the student counselling room?"
+- "How do I install VS Code / Unity / Python for class?", "Which Unity version does the class use?",
+  "What software do I need on my PC before classes start?" — the school's own setup guides come before any general
+  instructions on the web: they name the versions and settings the classes use.
 
 Don't use for: the student's own timetable, grades or credits (use `campussquare`); courses and their content (use
 `syllabus`);
@@ -38,7 +43,12 @@ visa or city procedures beyond what the school publishes (government sources onl
 ## Rules
 
 1. **Ask the school's search service first.** The pack's school information API holds the whole official site,
-   its PDFs (by page) and the parsed 学年暦, and answers in one call (see "Search service" below). Use `web_search`
+   its PDFs (by page), the parsed 学年暦, and the guides and material the school uploaded (categories such as
+   `shonan-it-byod`: PC and software setup for classes), and answers in one call (see "Search service" below).
+   **The first search has no `source`**: it covers every category, so a guide a teacher uploaded is found as well as
+   the website; narrow with `source` afterwards if needed. For PC and software setup (installing, versions,
+   licences, settings) also search `source=shonan-it-byod`, with the software's name and what is asked
+   (`Unity インストール バージョン`), not words like 授業 (they pull in syllabus pages instead of the guides). Use `web_search`
    only when the service does not answer (network error, `5xx`) or when nothing it returns fits after the retries
    in rule 2 — then as before: `site:shonan-it.ac.jp`, Japanese terms, the entry pages in `references/pages.md`.
 2. **Ask in Japanese, in the school's words.** The site, the PDFs and the search model are Japanese: a question in
@@ -77,7 +87,11 @@ this computer). **Japanese goes only in the JSON body of a here-doc**, never in 
 Japanese arguments into `???` (then the results are wrong).
 
 ```bash
-# the site and its PDFs: one hit per page / file (its best passage; more_in_document counts the others)
+# first: every category (the site, its PDFs, the school's guides such as BYOD, the BBS); one hit per page / file
+bash "${HERMES_SKILL_DIR}/scripts/school-api.sh" search <<'JSON'
+{"q": "Visual Studio Code インストール", "limit": 8}
+JSON
+# only the official site and its PDFs
 bash "${HERMES_SKILL_DIR}/scripts/school-api.sh" search <<'JSON'
 {"q": "奨学金 申請方法", "source": "shonan-it-site", "limit": 6}
 JSON
@@ -93,8 +107,15 @@ JSON
 bash "${HERMES_SKILL_DIR}/scripts/school-api.sh" document 12345
 ```
 
-- `search` → `results[]`: `title`, `url`, `date`, `category`, `section` (`p.3` = page 3 of a PDF), `text` (the
-  passage), `more_in_document`. Read the passages; open the document when the answer may continue elsewhere in it.
+- `search` → `results[]`: `source` (the category: `shonan-it-site`, `sitoss-bbs`, `shonan-it-byod` …), `title`,
+  `url`, `date`, `category`, `section` (`p.3` = page 3 of a PDF), `text` (the passage), `more_in_document`. Read the
+  passages; open the document when the answer may continue elsewhere in it (a setup guide: always, for every step).
+- A hit **without `url`** is a document the school uploaded (a guide, a handout): cite it by its title and say it
+  is the school's guide, e.g. 「大学の手順書『作業3マニュアル』（BYOD）」; never make up a link for it. Open every
+  guide you answer from with `document` and read it whole: a passage is not the guide. Never say a guide does not
+  mention something unless you read that guide whole in this conversation ("not in the guides I read" otherwise).
+  Follow its steps and versions; where it covers less than the student asks (only Windows, an older version), say so plainly,
+  then add the vendor's official instructions from the web and mark that part as coming from there.
 - `calendar` → `events[]` (`term`, `label`, `start`, `end`, `as_printed`), `today` (events covering the date),
   `terms.<前学期|後学期>` (`registration`, `correction`, `classes_start`), `registration_open` (the term whose
   registration or correction period includes the date, else `null`), `source` (title, URL of the 学年暦 PDF).
@@ -127,8 +148,9 @@ KEEP="${TOMO_DOCUMENTS:-$HOME/Documents/Tomo}/shonan-it"
 ```
 
 1. **Rewrite the question** into one or two Japanese searches (Rules 2, 3). Done when you have the Japanese terms.
-2. **Ask the service.** Dates: `calendar`. Everything else: `search` with `source=shonan-it-site`; if nothing fits,
-   one or two other wordings. For students' practical experience, then also `source=sitoss-bbs` (Rule 8). Open a document when the passage is cut off or the answer needs the whole page.
+2. **Ask the service.** Dates: `calendar`. Everything else: `search` without `source` first (every category,
+   including the school's setup guides), then `source=shonan-it-site` if the site needs a closer look; if nothing
+   fits, one or two other wordings. For students' practical experience, then also `source=sitoss-bbs` (Rule 8). Open a document when the passage is cut off or the answer needs the whole page.
    Done when a current page or PDF answers the question, or the script said SERVICE UNAVAILABLE / found nothing fitting.
 3. **Fallback only then.** `ls "$KEEP" 2>/dev/null` for a kept file that fits; else `web_search` with
    `site:shonan-it.ac.jp`, then the entry pages in `references/pages.md`; `web_extract` the page.

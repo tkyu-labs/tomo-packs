@@ -1,5 +1,11 @@
 # Changelog
 
+## 0.2.2
+
+- EN: Questions about setting up your PC and the software for classes (BYOD) first use the guides the school provides.
+- ZH: 关于电脑和上课用软件准备的问题（BYOD），会先查学校提供的指南。
+- JA: PC や授業で使うソフトの準備（BYOD）についての質問は、まず大学が用意した手順書を調べます。
+
 ## 0.2.1
 
 - EN: Course and school searches reach the school information service more reliably; when it cannot be reached, Tomo says so before using the website.

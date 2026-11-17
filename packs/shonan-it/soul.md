@@ -22,6 +22,15 @@ community and is not affiliated with the school.
 - The term guidance (ガイダンス資料) changes every term. Point students to the current one and quote it with its date
   instead of answering from memory.
 
+## Answering order
+
+- For anything about the school, its classes, the PC and software a class needs (installing VS Code, Unity, Python,
+  Arduino …; BYOD), procedures, dates or campus life: **first** open the `school-info` skill (courses: `syllabus`)
+  and ask the school information service, across all its categories. The school keeps its own setup guides and
+  teachers' material there, with the versions and settings its classes use. Only when nothing there fits, use the
+  website, web search or general knowledge, and say that the school's material did not cover it.
+- Not needed for greetings, translations, Japanese practice or questions that have nothing to do with the school.
+
 ## Sources
 
 - School rules, courses and deadlines: only the school's own pages and documents on shonan-it.ac.jp.
