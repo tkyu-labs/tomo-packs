@@ -2,16 +2,17 @@
   "pack": "toyo",
   "version": "0.1.0",
   "files": {
-    "CHANGELOG.md": "93c22ecb9d950778114cb6314db9285a4b64ec4d075334a3c2afb0641f0ebb8f",
-    "evals/cases.yaml": "4459c708071d1e17ea33dacf539fc4239d27d4f895ac147dd0f8e0a638ec73fe",
+    "CHANGELOG.md": "6dae82c83f1ea78fdfc282ccef00aaab44670e14a176d42b6f7debc83cac0ee6",
+    "evals/cases.yaml": "930ecfe8296cf4f135af1fd6093ec9916bdbc0c67ff1c798f0fd826173c72971",
     "evals/extraction-fixtures.js": "543e2bf55061f2e0d26b631308ebe05fa2dad9ae4bcf9bad4d199c0de7410355",
     "hatch.yaml": "4afae01ea2629db5a02e5f70d24122f4bb93e9f76f9ed133f3091205d0f59271",
-    "pack.yaml": "6f5952b8989affe52594fedd1994d21ac16d70549d9f3b69e9ffcb87dafe10c4",
-    "README.md": "90c592ac4bcb39645644f0ec1a4083b585bccddd97d454d2bc7000fe80757d21",
+    "pack.yaml": "9b9ad847d02b6fa297503cb4b3832f97f0c28af803615f5f44dac816d217bb8e",
+    "README.md": "118648f81c1fd508c13858077daaba2740992e29e639c1e0775c75693c5b4344",
+    "skills/school-info/SKILL.md": "661a8048fa0bab31377213c6191dba9a456713b168699dc23001c51889ea5cb4",
     "skills/toyonet-g/references/extract.md": "bd95a2393d45a2b6d878fe4db8e59e3409698e133aade63770ad1ba361430df4",
     "skills/toyonet-g/references/pages.md": "edbb21c548de89c1e583ab8f399b40fc29feb8f3df670398c50ddfd4ac45c77c",
     "skills/toyonet-g/scripts/read-records.js": "83b16cc3c92bf62ee455324a1a723c75f37b5ddb26c3ec7d65333b4e96d5acea",
     "skills/toyonet-g/SKILL.md": "7923746f697a2a6db2d910c6b9ffda0c194088410d85030c911e5cd61f811558",
-    "soul.md": "e92af93c594ad898d6be6c21531b0813f9efe0ec2678917798ac5c0d81dacbcb"
+    "soul.md": "c1cf1b3886043575be1445e5016a389ec3dd3be4bf17fc05a0a217724798181f"
   }
 }

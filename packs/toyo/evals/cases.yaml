@@ -30,3 +30,18 @@ cases:
     expected:
       cite: [g-sys.toyo.ac.jp]
       contains: [卒業等各種判定結果照会]
+  - id: academic-calendar
+    question: 在哪里看东洋大学今年的学年历？
+    expected:
+      cite: [www.toyo.ac.jp]
+      contains: [学年暦]
+  - id: student-certificate
+    question: 在学生の証明書はどう発行する？
+    expected:
+      cite: [www.toyo.ac.jp]
+      contains: [証明書]
+  - id: international-scholarships
+    question: Where can I find scholarships for international students at Toyo University?
+    expected:
+      cite: [www.toyo.ac.jp]
+      contains: [奨学金]
