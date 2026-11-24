@@ -1,0 +1,24 @@
+schema: 1
+version: 1
+sections:
+  - id: academic
+    title: { en: Academic records, zh: 学业记录, ja: 学修記録 }
+questions:
+  - id: academic_consent
+    section: academic
+    ask: setup
+    type: choice
+    label:
+      en: May Tomo read your ToyoNet-G academic records when you ask?
+      zh: 你提问时，是否允许 Tomo 读取 ToyoNet-G 中的学业记录？
+      ja: ご質問の際、TomoがToyoNet-Gの学修記録を読み取ってもよいですか？
+    why:
+      en: Used for your timetable, grades, GPA and credits. You sign in yourself and stay with the visible browser.
+      zh: 用于查询课表、成绩、GPA 和学分。请自行登录，并在可见浏览器前操作。
+      ja: 時間割・成績・GPA・単位の確認に使います。見えるブラウザでご自身でログインし、操作にお立ち会いください。
+    options:
+      - value: watch
+        label: { en: "Yes, while I watch", zh: "允许，且须本人在场", ja: "はい、本人が立ち会う場合のみ" }
+      - value: never
+        label: { en: "No", zh: 不允许, ja: いいえ }
+    remember: "ToyoNet-G record reading preference: {answer}. Respect a refusal and read only while the student watches."

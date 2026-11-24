@@ -50,6 +50,31 @@
         "github": "TkYu"
       },
       "lock_sha256": "78be446ec6ee47427abe065f39bbc4c61778a14f1cf6f4d0ff96ddc2280eaede"
+    },
+    {
+      "id": "toyo",
+      "name": {
+        "en": "Toyo University Pack",
+        "zh": "东洋大学能力包",
+        "ja": "東洋大学パック"
+      },
+      "school": {
+        "en": "Toyo University",
+        "zh": "东洋大学",
+        "ja": "東洋大学"
+      },
+      "short": "東洋大学",
+      "domain": "toyo.ac.jp",
+      "version": "0.1.0",
+      "requires": {
+        "tomo": ">=0.1.0",
+        "hermes": "0.21.x"
+      },
+      "publisher": {
+        "name": "020730111",
+        "github": "020730111"
+      },
+      "lock_sha256": "9d3ac8d4a68ec197b5c3b4ff5a3266d5ebc40c4cabb009103194ddfddc10edb2"
     }
   ]
 }
