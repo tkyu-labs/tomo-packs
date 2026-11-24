@@ -1,0 +1,90 @@
+schema: 1
+id: toyo
+name:
+  en: Toyo University Pack
+  zh: 东洋大学能力包
+  ja: 東洋大学パック
+school:
+  name:
+    en: Toyo University
+    zh: 东洋大学
+    ja: 東洋大学
+  short: 東洋大学
+  domain: toyo.ac.jp
+  country: JP
+version: 0.1.0
+description:
+  en: Search Toyo University's official website and check your registered classes, grades, GPA and credits in ToyoNet-G.
+  zh: 检索东洋大学官网，通过 ToyoNet-G 查询已选课程、成绩、GPA 和学分。
+  ja: 東洋大学の公式サイトを検索し、ToyoNet-Gで履修登録済科目・成績・GPA・単位を確認します。
+license: MIT
+publisher:
+  name: OKK
+  github: "020730111"
+requires:
+  tomo: ">=0.1.0"
+  hermes: "0.21.x"
+permissions:
+  network: [www.toyo.ac.jp]
+  browser_origins: [g-sys.toyo.ac.jp]
+  personal_origins: [g-sys.toyo.ac.jp]
+  personal_names:
+    g-sys.toyo.ac.jp: ToyoNet-G
+  personal_data: [timetable, grades]
+  personal_consent:
+    question: academic_consent
+    refuse: [never]
+  computer_use: false
+sources:
+  official: [toyo.ac.jp]
+  refresh:
+    academic_records: manual
+skills: [toyonet-g, school-info]
+ui:
+  quick_topics:
+    - id: timetable
+      icon: calendar
+      skill: toyonet-g
+      label: { en: My timetable, zh: 我的课表, ja: 自分の時間割 }
+      description:
+        en: Check the days, periods, classrooms and campuses of registered classes.
+        zh: 查看已选课程的星期、节次、教室和校区。
+        ja: 履修登録済科目の曜日、時限、教室、キャンパスを確認します。
+      prompts:
+        - { en: "What classes do I have on Tuesday?", zh: "我周二有哪些课？", ja: "火曜日の授業は何？" }
+    - id: grades
+      icon: graduation
+      skill: toyonet-g
+      label: { en: Grades and GPA, zh: 成绩与 GPA, ja: 成績・GPA }
+      description:
+        en: Read displayed course grades and GPA by term or year of study.
+        zh: 查看课程成绩以及页面显示的学期或学年 GPA。
+        ja: 科目の成績と、画面に表示された学期別・学年別のGPAを確認します。
+      prompts:
+        - { en: "What GPA does ToyoNet-G show by term?", zh: "ToyoNet-G 显示的各学期 GPA 是多少？", ja: "ToyoNet-Gに表示された学期ごとのGPAを教えて。" }
+    - id: credits
+      icon: book
+      skill: toyonet-g
+      label: { en: Credit requirements, zh: 学分要求, ja: 単位要件 }
+      description:
+        en: Check the earned, in-progress and shortfall credits shown for each requirement.
+        zh: 查看各项要求的已修、修读中和不足学分。
+        ja: 要件ごとに表示された修得・履修中・不足単位を確認します。
+      prompts:
+        - { en: "Which credit requirements have a shortfall?", zh: "哪些学分要求还没满足？", ja: "どの要件で単位が不足している？" }
+    - id: school-info
+      icon: search
+      skill: school-info
+      label: { en: School information, zh: 学校信息检索, ja: 大学情報検索 }
+      description:
+        en: Find the academic calendar, procedures, student support and campus information on the official website.
+        zh: 在东洋大学官网查询学年历、办事手续、学生支援和校区信息。
+        ja: 学年暦・各種手続き・学生支援・キャンパス情報を大学公式サイトで調べます。
+      prompts:
+        - { en: "Where can I find this year's academic calendar?", zh: "在哪里看今年的学年历？", ja: "今年度の学年暦はどこで確認できる？" }
+        - { en: "How can an enrolled student get a certificate?", zh: "在校生怎么开证明？", ja: "在学生は証明書をどう発行する？" }
+  quick_ask_suggestions:
+    - skill: toyonet-g
+      text: { en: "What classes am I registered for?", zh: "我选了哪些课？", ja: "履修登録した科目を確認して。" }
+    - skill: school-info
+      text: { en: "Where is the academic calendar?", zh: "在哪里看学年历？", ja: "学年暦はどこで確認できる？" }

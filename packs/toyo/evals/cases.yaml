@@ -1,0 +1,47 @@
+schema: 1
+cases:
+  - id: registered-timetable
+    question: 我周二有哪些课，分别在哪个教室？
+    expected:
+      cite: [g-sys.toyo.ac.jp]
+      contains: [履修登録確認表]
+  - id: course-grade
+    question: この科目の成績と成績備考を確認して。
+    expected:
+      cite: [g-sys.toyo.ac.jp]
+      contains: [履修・修得科目]
+  - id: term-gpa
+    question: What GPA is displayed for each term?
+    expected:
+      cite: [g-sys.toyo.ac.jp]
+      contains: [単位数集計表, GPA]
+  - id: credit-shortfall
+    question: 哪些毕业学分要求还缺学分？
+    expected:
+      cite: [g-sys.toyo.ac.jp]
+      contains: [不足単位]
+  - id: cancellation-board
+    question: 白山キャンパスの今日の休講を確認して。
+    expected:
+      cite: [g-sys.toyo.ac.jp]
+      contains: [白山]
+  - id: official-graduation
+    question: Where is my formal graduation decision?
+    expected:
+      cite: [g-sys.toyo.ac.jp]
+      contains: [卒業等各種判定結果照会]
+  - id: academic-calendar
+    question: 在哪里看东洋大学今年的学年历？
+    expected:
+      cite: [www.toyo.ac.jp]
+      contains: [学年暦]
+  - id: student-certificate
+    question: 在学生の証明書はどう発行する？
+    expected:
+      cite: [www.toyo.ac.jp]
+      contains: [証明書]
+  - id: international-scholarships
+    question: Where can I find scholarships for international students at Toyo University?
+    expected:
+      cite: [www.toyo.ac.jp]
+      contains: [奨学金]
