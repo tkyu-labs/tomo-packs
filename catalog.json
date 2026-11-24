@@ -71,10 +71,10 @@
         "hermes": "0.21.x"
       },
       "publisher": {
-        "name": "020730111",
+        "name": "OKK",
         "github": "020730111"
       },
-      "lock_sha256": "9d3ac8d4a68ec197b5c3b4ff5a3266d5ebc40c4cabb009103194ddfddc10edb2"
+      "lock_sha256": "8e0bb8cc04d329a29c4d8336717289384b3edc34c536dea1a64cbf0f28fe6023"
     }
   ]
 }

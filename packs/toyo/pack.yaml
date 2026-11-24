@@ -19,7 +19,7 @@ description:
   ja: ToyoNet-Gで履修登録済科目・成績・GPA・単位を確認し、授業時間割・キャンパス別休講情報を探します。
 license: MIT
 publisher:
-  name: "020730111"
+  name: OKK
   github: "020730111"
 requires:
   tomo: ">=0.1.0"
